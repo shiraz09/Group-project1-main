@@ -1,0 +1,914 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <cstdlib>
+
+
+/*
+ * Below headers are only added for delay.
+ */
+
+#include <chrono>
+#include <thread>
+
+using namespace std::this_thread;     // sleep_for, sleep_until
+using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
+using std::chrono::system_clock;
+
+/*
+ * End delay headers.
+ */
+
+// To avoid using std::
+using std::cin;
+using std::cout;
+using std::endl;
+using std::string;
+using std::vector;
+using std::fstream;
+
+
+// Base class
+class DatabaseCar {
+protected:
+    double maxSpeed;
+    double mileage;
+    double fuelCapacity;
+    string fuelType;
+    int year;
+    string modelName;
+    double odometerReading;
+    double price;
+public:
+    // Calling below constructor with default values
+    DatabaseCar()
+    : DatabaseCar(0, 0, 0, "", 0, "", 0, 0) {}
+
+    DatabaseCar(double mxSpeed, double mlg, double flCap, string flType, 
+            int yr, string name, double odoReading, double cost)
+    : maxSpeed{mxSpeed}, mileage{mlg}, fuelCapacity{flCap}
+    , fuelType{flType}, year{yr}, modelName{name}
+    , odometerReading{odoReading}, price{cost} {}
+};
+
+class Luxury : protected DatabaseCar {
+    bool hasUmbrella;
+    bool hasFridge;
+    bool hasTV;
+    double currentSunRoofOpacity;
+
+public:
+
+    // Class constructor calling base constructor (super in other languages)
+    // and initializing its own variables.
+    
+    Luxury(double mxSpeed, double mlg, double flCap, string flType, 
+            int yr, string name, double odoReading, double cost, bool umb, 
+            bool fridge, bool tv, double roofOp)
+    : DatabaseCar(mxSpeed, mlg, flCap, flType, yr, name, odoReading, cost)
+    , hasUmbrella{umb}, hasFridge{fridge}, hasTV{tv}
+    , currentSunRoofOpacity{roofOp}{}
+    
+    Luxury() 
+    : Luxury(0, 0, 0, "", 0, "", 0, 0, false, false, false, 0){}
+
+    void displayInfoLux();
+    double giveCost(int days);
+    string giveName();
+};
+
+void Luxury :: displayInfoLux() {
+    cout << "Your selected car is: " << modelName << endl;
+    cout << "Its max speed is: " << maxSpeed << " km/ph" << endl;
+    cout << "The mileage it provides is: " << mileage << " km/L" << endl;
+    cout << "Its fuel capacity is: " << fuelCapacity << " L" << endl;
+    cout << "The type of fuel is: " << fuelType << endl;
+    cout << "This car came to us in the year: " << year << endl;
+    cout << "Its current odometer reading is: " << odometerReading << endl;
+    if (hasUmbrella) {
+        cout << "Your car also has an umbrella holder" << endl;
+    }
+    if (hasFridge) {
+        cout << "Your car also has a fridge for your beverages and meals" << endl;
+    }
+    if (hasTV) {
+        cout << "Your car also has a TV for your priceless entertainment" << endl;
+    }
+    cout << "The current sun roof opacity of your car is set to "
+         << currentSunRoofOpacity << endl;
+    cout << "Its rent price per day is: " << price << " rupees" << endl;
+    cout << endl;
+}
+
+double Luxury :: giveCost(int days)
+{
+    return(price*days);
+}
+
+string Luxury :: giveName() {
+    return modelName;
+}
+
+class Suv : protected DatabaseCar {
+    double groundClearance;
+    bool allWheelDrive;
+    double heightSeatingPos;
+
+public:
+
+    // Class constructor calling base constructor (super in other languages)
+    // and initializing its own variables.
+
+    Suv(double mxSpeed, double mlg, double flCap, string flType, 
+            int yr, string name, double odoReading, double cost, double GC, 
+            bool AWD, double seatingPos)
+    : DatabaseCar(mxSpeed, mlg, flCap, flType, yr, name, odoReading, cost)
+    , groundClearance{GC}, allWheelDrive{AWD}
+    , heightSeatingPos{seatingPos} {}
+    
+    Suv() 
+    : Suv(0, 0, 0, "", 0, "", 0, 0, 0, false, 0){}
+
+    void displayInfoSuv();
+    double giveCost(int days);
+    string giveName();
+};
+
+void Suv :: displayInfoSuv() {
+    cout << "Your selected car is: " << modelName << endl;
+    cout << "Its max speed is: " << maxSpeed << " km/ph" << endl;
+    cout << "The mileage it provides is: " << mileage << " km/L" << endl;
+    cout << "Its fuel capacity is: " << fuelCapacity << " L" << endl;
+    cout << "The type of fuel is: " << fuelType << endl;
+    cout << "This car came to us in the year: " << year << endl;
+    cout << "Its current odometer reading is: " << odometerReading << endl;
+    cout << "Its gruond clearance level is: " << groundClearance << "mm" << endl;
+    cout << "The height of the seat that you would be enjoying is: "
+         << heightSeatingPos << "mm" << endl;
+    if (allWheelDrive) {
+        cout << "Your car is super powerful since it has an all wheel drive!" << endl;
+    }
+    cout << "Its rent price per day is: " << price << " rupees" << endl;
+    cout << endl;
+}
+double Suv :: giveCost(int days)
+{
+    return(price*days);
+}
+string Suv :: giveName() {
+    return modelName;
+}
+
+class Sedan : protected DatabaseCar
+{
+    double bootSpace;
+    double headSpace;
+public:
+
+    // Class constructor calling base constructor (super in other languages)
+    // and initializing its own variables.
+    
+    Sedan(double mxSpeed, double mlg, double flCap, string flType, 
+            int yr, string name, double odoReading, double cost, double boot_space
+            ,double head_space)
+    : DatabaseCar(mxSpeed, mlg, flCap, flType, yr, name, odoReading, cost)
+    , bootSpace{boot_space}, headSpace{head_space}{}
+
+    Sedan(): Sedan(0, 0, 0, "", 0, "", 0, 0, 0, 0){}
+
+    void displayInfoSedan(); 
+    double giveCost(int days);
+    string giveName();
+}; 
+
+void Sedan :: displayInfoSedan()
+{
+    cout << "Your selected car is: " << modelName << endl;
+    cout << "Its max speed is: " << maxSpeed << " km/ph" << endl;
+    cout << "The mileage it provides is: " << mileage << " km/L" << endl;
+    cout << "Its fuel capacity is: " << fuelCapacity << " L" << endl;
+    cout << "The type of fuel is: " << fuelType << endl;
+    cout << "This car came to us in the year: " << year << endl;
+    cout << "Its current odometer reading is: " << odometerReading << endl;
+    cout << "The trunk space of the car is: "<< bootSpace << "ltrs" << endl;
+    cout << "The head space of the car is: "<< headSpace << "mm" << endl;
+    cout << "Its rent price per day is: " << price << " rupees" << endl;
+    cout << endl;
+}
+double Sedan :: giveCost(int days)
+{
+    return(price*days);
+}
+string Sedan :: giveName() {
+    return modelName;
+}
+
+int welcomeMenu()
+{
+    int choice_in_wm;
+    cout << endl;
+    cout << "What type of car you would like to book:"<< endl;
+    cout << "1.Luxury "<<endl;
+    cout << "2.SUV "<<endl;
+    cout << "3.Sedan "<<endl;
+    cout << "Enter your choice: "<< endl;
+    cin >> choice_in_wm;
+    cout << endl;
+    if(choice_in_wm<1 || choice_in_wm>3)
+    {
+        cout << "Please enter a valid number "<<endl;
+        cout << endl;
+        return(-1);
+    }
+    else
+        return(choice_in_wm);
+
+}
+
+// Function to display variety of luxury cars to the user and return
+// the car which the user chooses.
+int luxCarSelection() {
+    int carChoice{};
+    int chl;
+    cout<<"\nEnter your preference ::"<<endl;
+    cout<<"1.Mileage"<<endl;
+    cout<<"2.Cost"<<endl;
+    cout<<"3.Return to the Car-Type Menu"<<endl;
+    cin>>chl;
+    switch(chl)
+    {
+    	case 1:
+            cout << "Choose which car you would like to ride in" << endl;
+            cout << "\n1) Mercedes E-Class E 220d BS4\n" << endl;
+            cout << "   Mileage\t: 14.1 "<<endl;
+            cout << "   Cost \t: Rs.7800/day"<<endl;
+            cout << "   Fuel \t: Diesel"<<endl;
+            cout << "\n2) BMW X1\n" << endl;
+            cout << "   Mileage\t: 10.1 "<<endl;
+            cout << "   Cost \t: Rs.7500/day"<<endl;
+            cout << "   Fuel \t: Petrol"<<endl;
+            cout << "\n3) Audi A8L Technology Model\n" << endl;
+            cout << "   Mileage\t: 7.92 "<<endl;
+            cout << "   Cost \t: Rs.15000/day"<<endl;
+            cout << "   Fuel \t: Hybrid"<<endl;
+            cout << "\n4) Mercedes S-Class 5500 W223 BS4\n" << endl;
+            cout << "   Mileage\t: 6.7 "<<endl;
+            cout << "   Cost \t: Rs.16000/day"<<endl;
+            cout << "   Fuel \t: Petrol"<<endl;
+            cin >> carChoice;
+            cout << endl;
+            break;
+        case 2:
+        	cout << "Choose which car you would like to ride in" << endl;
+            cout << "\n1) BMW X1\n" << endl;
+            cout << "   Mileage\t: 10.1 "<<endl;
+            cout << "   Cost \t: Rs.7500/day"<<endl;
+            cout << "   Fuel \t: Petrol"<<endl;
+            cout << "\n2) Mercedes E-Class E 220d BS4\n" << endl;
+            cout << "   Mileage\t: 14.1 "<<endl;
+            cout << "   Cost \t: Rs.7800/day"<<endl;
+            cout << "   Fuel \t: Diesel"<<endl;
+            cout << "\n3) Audi A8L Technology Model\n" << endl;
+            cout << "   Mileage\t: 7.92 "<<endl;
+            cout << "   Cost \t: Rs.15000/day"<<endl;
+            cout << "   Fuel \t: Hybrid"<<endl;
+            cout << "\n4) Mercedes S-Class 5500 W223 BS4\n" << endl;
+            cout << "   Mileage\t: 6.7 "<<endl;
+            cout << "   Cost \t: Rs.16000/day"<<endl;
+            cout << "   Fuel \t: Petrol"<<endl;
+            cin >> carChoice;
+            cout << endl;
+            break;
+        case 3:
+        	welcomeMenu();
+        	break;
+        default:
+        	cout<<"Invalid Choice"<<endl;
+        	break;
+    } 
+    if(carChoice<1 || carChoice>4)
+    {
+        cout << "Please enter a valid number "<<endl;
+        return -1;
+    }
+    else
+        return carChoice;
+}
+
+// Function to display variety of suv cars to the user and return
+// the car which the user chooses.
+int suvCarSelection() {
+    int carChoice{};
+    int chsu;
+    cout<<"\nEnter your preference ::"<<endl;
+    cout<<"1.Mileage"<<endl;
+    cout<<"2.Cost"<<endl;
+    cout<<"3.Return to the Car-Type Menu"<<endl;
+    cin>>chsu;
+    switch(chsu)
+    {
+    case 1:
+    	cout << "Choose which car you would like to ride in" << endl;
+    	cout << "1) Kia Seltos FWD" << endl;
+        cout << "   Mileage\t: 18.6 "<<endl;
+        cout << "   Cost \t: Rs.2500/day"<<endl;
+        cout << "   Fuel \t: Petrol"<<endl;
+        cout << "2) Mahindra XUV 700" << endl;
+        cout << "   Mileage\t: 16.0 "<<endl;
+        cout << "   Cost \t: Rs.3000/day"<<endl;
+        cout << "   Fuel \t: Diesel"<<endl;
+        cout << "3) Mahindra Scorpio S3" << endl;
+        cout << "   Mileage\t: 15.4 "<<endl;
+        cout << "   Cost \t: Rs.2400/day"<<endl;
+        cout << "   Fuel \t: Diesel"<<endl;
+        cout << "4) Toyota Fortuner" << endl;
+        cout << "   Mileage\t: 13.4 "<<endl;
+        cout << "   Cost \t: Rs.3800/day"<<endl;
+        cout << "   Fuel \t: Petrol"<<endl;
+        cin >> carChoice;
+        cout << endl;
+        break;
+        
+    case 2:
+    	cout << "1) Mahindra Scorpio S3" << endl;
+        cout << "   Mileage\t: 15.4 "<<endl;
+        cout << "   Cost \t: Rs.2400/day"<<endl;
+        cout << "   Fuel \t: Diesel"<<endl;
+        cout << "2) Kia Seltos FWD" << endl;
+        cout << "   Mileage\t: 18.6 "<<endl;
+        cout << "   Cost \t: Rs.2500/day"<<endl;
+        cout << "   Fuel \t: Petrol"<<endl;
+        cout << "3) Mahindra XUV 700" << endl;
+        cout << "   Mileage\t: 16.0 "<<endl;
+        cout << "   Cost \t: Rs.3000/day"<<endl;
+        cout << "   Fuel \t: Diesel"<<endl;
+        cout << "4) Toyota Fortuner" << endl;
+        cout << "   Mileage\t: 13.4 "<<endl;
+        cout << "   Cost \t: Rs.3800/day"<<endl;
+        cout << "   Fuel \t: Petrol"<<endl;
+        cin >> carChoice;
+        cout << endl;
+        break;
+        
+    case 3:
+    	welcomeMenu();
+    	break;
+    default:
+    	cout<<"Invalid Option"<<endl;
+    	break;
+   }
+    	
+
+    if(carChoice<1 || carChoice>4)
+    {
+        cout << "Please enter a valid number "<<endl;
+        return -1;
+    }
+    else
+        return carChoice;
+}
+
+// Function to display variety of sedan cars to the user and return
+// the car which the user chooses.
+int sedanCarSelection() {
+    int carChoice{};
+    int chs;
+    cout<<"\nEnter your preference ::"<<endl;
+    cout<<"1.Mileage"<<endl;
+    cout<<"2.Cost"<<endl;
+    cin>>chs;
+    switch(chs)
+    {
+    	case 1:
+    		cout << "Choose which car you would like to ride in" << endl;
+    		cout << "1) Hyundai Verna SX" << endl;
+            cout << "   Mileage\t: 21.5 "<<endl;
+            cout << "   Cost \t: Rs.2500/day"<<endl;
+            cout << "   Fuel \t: Diesel"<<endl;
+    		cout << "2) Maruti Ciaz Sigma" << endl;
+            cout << "   Mileage\t: 20.65 "<<endl;
+            cout << "   Cost \t: Rs.2600/day"<<endl;
+            cout << "   Fuel \t: Petrol"<<endl;
+            cout << "3) Maruti Ciaz Alpha" << endl;
+            cout << "   Mileage\t: 20.0 "<<endl;
+            cout << "   Cost \t: Rs.2400/day"<<endl;
+            cout << "   Fuel \t: Petrol"<<endl;
+            cout << "4) Honda City V MT" << endl;
+            cout << "   Mileage\t: 17.55 "<<endl;
+            cout << "   Cost \t: Rs.2800/day"<<endl;
+            cout << "   Fuel \t: Diesel"<<endl;
+            cin >> carChoice;
+           cout << endl;
+            break;
+        case 2:
+    	    cout << "Choose which car you would like to ride in" << endl;
+    	    cout << "1) Maruti Ciaz Alpha" << endl;
+            cout << "   Mileage\t: 20.0 "<<endl;
+            cout << "   Cost \t: Rs.2400/day"<<endl;
+            cout << "   Fuel \t: Petrol"<<endl;
+    		cout << "2) Hyundai Verna SX" << endl;
+            cout << "   Mileage\t: 21.5 "<<endl;
+            cout << "   Cost \t: Rs.2500/day"<<endl;
+            cout << "   Fuel \t: Diesel"<<endl;
+    		cout << "3) Maruti Ciaz Sigma" << endl;
+            cout << "   Mileage\t: 20.65 "<<endl;
+            cout << "   Cost \t: Rs.2600/day"<<endl;
+            cout << "   Fuel \t: Petrol"<<endl;
+            cout << "4) Honda City V MT" << endl;
+            cout << "   Mileage\t: 17.55 "<<endl;
+            cout << "   Cost \t: Rs.2800/day"<<endl;
+            cout << "   Fuel \t: Diesel"<<endl;
+            cin >> carChoice;
+            cout << endl;
+            break;
+        case 3:
+        	welcomeMenu();
+        	break;
+        default:
+        	cout<<"Invalid Choice"<<endl;
+        	break;
+   }
+
+    if(carChoice<1 || carChoice>4)
+    {
+        cout << "Please enter a valid number "<<endl;
+        return -1;
+    }
+    else
+        return carChoice;
+}
+
+int main() {
+
+    int chosenCar{};
+    string userName;
+    long long int userNumber;
+
+    /*
+     * Object initialization start
+     */
+    
+    Luxury bmwx1(129, 10.1, 51, "Petrol", 
+            2018, "BMW X1", 120, 7500, false, 
+            false, true, 1.6);
+    
+    Luxury mercEClass(224, 14.1, 80, "Diesel", 
+                    2021, "Mercedes E-Class E 220d BS4",
+                    245, 7800, false, false, false, 1.4);
+    
+    Luxury mercSClass(250, 6.7, 80, "Petrol", 
+                    2021, "Mercedes S-Class 5500 W223 BS4",
+                    100, 16000, true, true, true, 1.8);
+    
+    Luxury audiA8(250, 7.92, 80, "Hybrid (Electric + Petrol)",
+                2022, "Audi A8L Technology Model", 120, 15000,
+                true, true, true, 2);
+
+    Suv xuv700(200, 16, 60, "Diesel", 2022, "Mahindra XUV 700",
+            100, 3000, 200, true, 840);
+
+    Suv scorpioS3(160, 15.4, 58, "Diesel", 2021, 
+                "Mahindra Scorpio S3", 100, 2400, 180, false,
+                840);
+
+    Suv fortuner(186, 13.4, 80, "Petrol", 2020, 
+                "Toyota Fortuner", 100, 3800, 225, true,
+                820);
+
+    Suv seltos(165, 18.6, 50, "Petrol", 2022, 
+                "Kia Seltos FWD", 100, 2500, 190, false,
+                800);
+
+    Sedan ciazA(185, 20, 43, "Petrol", 2021, "Maruti Ciaz Alpha",
+            100, 2400, 510, 900);
+
+    Sedan ciazS(185, 20.65, 43, "Petrol", 2022, "Maruti Ciaz Sigma",
+            100, 2600, 510, 900);
+
+    Sedan hondaCity(195, 17.55, 40, "Diesel", 2022, "Honda City V MT",
+            100, 2800, 506, 910);
+
+    Sedan verna(200, 21.5, 45, "Petrol", 2022, "Hyundai Verna SX",
+            100, 2500, 480, 860);
+
+
+    /*
+     * Object initialization end
+     */
+    
+    // Create a file pointer fptr
+    fstream fptr;
+    // Open customerInfo.txt file in append mode
+    fptr.open("customerInfo.txt", std::ios::app);
+
+    if (!fptr) {
+        cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+        return 0;
+    }
+
+    cout << "Welcome to Car Rental System!" << endl;
+    cout << "Made by: " <<endl;
+    cout << "1. Mudit Garg " << endl;
+    cout << "2. Nihar Phansalkar " << endl;
+    cout << "3. Ojaswini Kohale " << endl;
+    cout << "4. P. Karthik Krishna " << endl;
+
+    /*
+     * Functions for delay start
+     */
+    sleep_for(10ns);
+    sleep_until(system_clock::now() + 3s);
+
+    /*
+     * Functions for delay end
+     */
+    
+    // In-built function to clear terminal/console
+    system("cls"); // Windows command
+    // system("clear"); // Linux command
+
+    cout << "Welcome to Car Rental System!" << endl << endl;
+    cout << "Please enter your name: ";
+    cin >> userName;
+    fptr << "Name: " << userName;
+    fptr << endl;    
+    cout << "Please enter your number: ";
+    cin >> userNumber;
+    fptr << "Number: " << userNumber;
+    fptr << endl;
+
+    fptr.close();
+
+    // In-built function to clear terminal/console
+    system("cls"); // Windows command
+    // system("clear"); // Linux command
+
+    cout << "Dear " << userName << endl;
+
+    cout << "Please press '1' to book a car" << endl;
+    cout << "Please press '2' to exit" << endl;
+
+    int initialChoice;
+    cin >> initialChoice;
+
+    int val_from_wm;
+    int luxCarChoice{0}, suvCarChoice{0}, sedanCarChoice{0};
+
+    while(initialChoice==1)
+    {
+        switch(initialChoice)
+        {
+
+            case 1:
+                {
+                    val_from_wm = welcomeMenu();
+
+                    while(val_from_wm == -1)
+                    {
+                        val_from_wm = welcomeMenu();
+                    }
+
+                    if(val_from_wm == 1)
+                    {
+                        luxCarChoice = luxCarSelection();
+                        while (luxCarChoice == -1) {
+                            luxCarChoice = luxCarSelection();
+                        }
+                        break;
+                    }
+                    else if(val_from_wm == 2)
+                    {
+                        suvCarChoice = suvCarSelection();
+                        while (suvCarChoice == -1) {
+                            suvCarChoice = suvCarSelection();
+                        }
+                        break;
+                    }
+                    else if(val_from_wm == 3)
+                    {
+                        sedanCarChoice = sedanCarSelection();
+                        while (sedanCarChoice == -1) {
+                            sedanCarChoice = sedanCarSelection();
+                        }
+                        break;
+                    }
+                }
+                
+                break;
+        }
+
+        // In-built function to clear terminal/console
+        system("cls"); // Windows command
+        // system("clear"); // Linux command
+
+        if (luxCarChoice) {
+            if (luxCarChoice == 1) {
+                bmwx1.displayInfoLux();
+                chosenCar=11;
+            }
+            else if (luxCarChoice == 2) {
+                mercEClass.displayInfoLux();
+                chosenCar=12;
+            }
+            else if (luxCarChoice == 3) {
+                mercSClass.displayInfoLux();
+                chosenCar=13;
+            }
+            else if (luxCarChoice == 4) {
+                audiA8.displayInfoLux();
+                chosenCar=14;
+            }
+        } 
+
+        if (suvCarChoice) {
+            if (suvCarChoice == 1) {
+                xuv700.displayInfoSuv();
+                chosenCar=21;
+            }
+            else if (suvCarChoice == 2) {
+                scorpioS3.displayInfoSuv();
+                chosenCar=22;
+            }
+            else if (suvCarChoice == 3) {
+                fortuner.displayInfoSuv();
+                chosenCar=23;
+            }
+            else if (suvCarChoice == 4) {
+                seltos.displayInfoSuv();
+                chosenCar=24;
+            }
+        } 
+
+        if (sedanCarChoice) {
+            if (sedanCarChoice == 1) {
+                ciazA.displayInfoSedan();
+                chosenCar=31;
+            }
+            else if (sedanCarChoice == 2) {
+                ciazS.displayInfoSedan();
+                chosenCar=32;
+            }
+            else if (sedanCarChoice == 3) {
+                hondaCity.displayInfoSedan();
+                chosenCar=33;
+            }
+            else if (sedanCarChoice == 4) {
+                verna.displayInfoSedan();
+                chosenCar=34;
+            }
+        } 
+
+        int days{},billPrice{};
+        cout<<"How many days you would like to book the car for?"<<endl;
+        cin>>days;
+
+        switch(chosenCar)
+        {
+            case 11:
+            billPrice=bmwx1.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << bmwx1.giveName() << endl;
+            fptr.close();
+            
+            break;
+
+            case 12:
+            billPrice=mercEClass.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << mercEClass.giveName() << endl;
+            fptr.close();
+            
+            break;
+
+            case 13:
+            billPrice=mercSClass.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << mercSClass.giveName() << endl;
+            fptr.close();
+            
+            break;
+
+            case 14:
+            billPrice=audiA8.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << audiA8.giveName() << endl;
+            fptr.close();
+
+            break;
+
+            case 21:
+            billPrice=xuv700.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << xuv700.giveName() << endl;
+            fptr.close();
+            
+            break;
+
+            case 22:
+            billPrice=scorpioS3.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << scorpioS3.giveName() << endl;
+            fptr.close();
+            
+            break;
+
+            case 23:
+            billPrice=fortuner.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << fortuner.giveName() << endl;
+            fptr.close();
+            
+            break;
+
+            case 24:
+            billPrice=seltos.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << seltos.giveName() << endl;
+            fptr.close();
+            
+            break;
+
+            case 31:
+            billPrice=ciazA.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << ciazA.giveName() << endl;
+            fptr.close();
+            
+            break;
+
+            case 32:
+            billPrice=ciazS.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << ciazS.giveName() << endl;
+            fptr.close();
+            
+            break;
+
+            case 33:
+            billPrice=hondaCity.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << hondaCity.giveName() << endl;
+            fptr.close();
+            
+            break;
+
+            case 34:
+            billPrice=verna.giveCost(days);
+
+            fptr.open("customerInfo.txt", std::ios::app);
+
+            if (!fptr) {
+                cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+                return 0;
+            }
+            fptr << "Car booked: " << verna.giveName() << endl;
+            fptr.close();
+            
+            break;
+
+        }
+
+        fptr.open("customerInfo.txt", std::ios::app);
+
+        if (!fptr) {
+            cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+            return 0;
+        }
+        fptr << "Days booked for: " << days << endl;
+        fptr.close();
+
+        cout << endl << endl;
+
+        cout << "Dear " << userName << "," << endl;
+
+        cout<<"Your final bill is: "<< (billPrice * 0.18) + billPrice << " (inclusive of taxes)" << endl;
+        cout << "Thank you for using this car rental system! Expect your vehicle to arrive soon!" << endl;
+        cout << "We hope you enjoy your ride to the fullest!" << endl;
+
+        fptr.open("customerInfo.txt", std::ios::app);
+
+        if (!fptr) {
+            cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+            return 0;
+        }
+        fptr << "Bill: " << (billPrice * 0.18) + billPrice << endl << endl;
+        fptr.close();
+
+
+        /*
+         * Functions for delay start
+         */
+
+        sleep_for(10ns);
+        sleep_until(system_clock::now() + 6s);
+
+        /*
+         * Functions for delay end
+         */
+        
+        
+        // In-built function to clear terminal/console
+        system("cls"); // Windows command
+        // system("clear"); // Linux command
+
+
+        // Open customerInfo.txt file in append mode
+        fptr.open("customerInfo.txt", std::ios::app);
+
+        if (!fptr) {
+            cout << "Please create a customerInfo.txt file and re-run this program!" << endl;
+            return 0;
+        }
+
+        cout << "Welcome to Car Rental System!" << endl << endl;
+        cout << "Please enter your name: ";
+        cin >> userName;
+        fptr << "Name: " << userName;
+        fptr << endl;    
+        cout << "Please enter your number: ";
+        cin >> userNumber;
+        fptr << "Number: " << userNumber;
+        fptr << endl;    
+
+        fptr.close();
+
+        // In-built function to clear terminal/console
+        system("cls"); // Windows command
+        // system("clear"); // Linux command
+
+        cout << "Dear " << userName << endl;
+
+        cout << "Please press '1' to book a car" << endl;
+        cout << "Please press '2' to exit" << endl;
+        cin >> initialChoice;
+    }
+    fptr.close();
+    return 0;
+}
